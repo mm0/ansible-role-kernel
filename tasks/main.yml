@@ -1,0 +1,43 @@
+---
+- name: modprobe nf_conntrack_max
+  modprobe:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ kernel_modules }}"
+
+# In order to load anf_conntrack_max at boot via sysctl
+- name: /etc/modules nf_conntrack
+  lineinfile:
+    dest: /etc/modules
+    line: "{{ item }}"
+    state: present
+    create: yes
+  with_items: "{{ kernel_modules }}"
+
+- name: Set kernel vars permanently
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+    reload: no
+  with_items: "{{ kernel_vars }}"
+
+- name: IO Vars live
+  shell: "{{ item }}"
+  with_items: "{{ io_vars }}"
+
+- name: IO Vars permanently
+  lineinfile:
+    line: "{{ item }}"
+    state: present
+    dest: /etc/rc.local
+    insertbefore: "exit 0"
+    create: yes
+    mode: 0755
+    owner: root
+    group: root
+  with_items: "{{ io_vars }}"
+
+- name: Reload sysctl
+  sysctl:
+    reload: yes

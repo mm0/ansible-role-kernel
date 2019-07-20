@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  author: Matt Margolin
+  description: An Ansible role that modifies sysctl and sysfs in a way that is optimized for cloud performance
+  company:
+  license: BSD2
+  min_ansible_version: 2.0
+  role_name: kernel
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+  galaxy_tags:
+    - system
+    - cloud
