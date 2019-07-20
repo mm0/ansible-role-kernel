@@ -19,7 +19,7 @@
     name: "{{ item.name }}"
     value: "{{ item.value }}"
     state: present
-    reload: no
+    reload: yes
   with_items: "{{ kernel_vars }}"
 
 - name: IO Vars live
@@ -38,6 +38,3 @@
     group: root
   with_items: "{{ io_vars }}"
 
-- name: Reload sysctl
-  sysctl:
-    reload: yes
