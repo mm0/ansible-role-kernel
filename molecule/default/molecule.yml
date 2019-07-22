@@ -2,23 +2,27 @@
 dependency:
   name: galaxy
 driver:
-  name: docker
+  name: vagrant
+  provider:
+    name: virtualbox
 lint:
   name: yamllint
 platforms:
   - name: instance
+    box: ubuntu/xenial64
     groups:
-      - cluster_master
-    inventory:
-      hosts:
-        cluster_nodes:
-    image: geerlingguy/docker-ubuntu1804-ansible:latest
-    command: ${MOLECULE_DOCKER_COMMAND:-""}
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-    privileged: true
-    pre_build_image: true
-    pull: false
+      - rabbitmq
+    memory: 512
+    cpus: 2
+    provider_options:
+      gui: false
+    instances:
+      - name: test-role-vagrant-01
+    interfaces:
+      - auto_config: true
+        network_name: private_network
+        type: dhcp
+    provision: true
 provisioner:
   name: ansible
   lint:
@@ -28,3 +32,18 @@ verifier:
   name: testinfra
   lint:
     name: flake8
+scenario:
+  test_sequence:
+    - lint
+    - cleanup
+    - destroy
+    - dependency
+    - syntax
+    - create
+    - prepare
+    - converge
+    # - idempotence
+    - side_effect
+    - verify
+    - cleanup
+    - destroy

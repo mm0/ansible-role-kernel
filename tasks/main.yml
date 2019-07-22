@@ -4,6 +4,7 @@
     name: "{{ item }}"
     state: present
   with_items: "{{ kernel_modules }}"
+  become: yes
 
 # In order to load anf_conntrack_max at boot via sysctl
 - name: /etc/modules nf_conntrack
@@ -13,6 +14,7 @@
     state: present
     create: yes
   with_items: "{{ kernel_modules }}"
+  become: yes
 
 - name: Set kernel vars permanently
   sysctl:
@@ -21,10 +23,12 @@
     state: present
     reload: yes
   with_items: "{{ kernel_vars }}"
+  become: yes
 
 - name: IO Vars live
   shell: "{{ item }}"
   with_items: "{{ io_vars }}"
+  become: yes
 
 - name: IO Vars permanently
   lineinfile:
@@ -37,4 +41,4 @@
     owner: root
     group: root
   with_items: "{{ io_vars }}"
-
+  become: yes
